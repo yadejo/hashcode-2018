@@ -6,7 +6,9 @@ namespace Hashcode.Terminal
     {
         static void Main(string[] args)
         {
-            Console.WriteLine("Hello World!");
+            var res = InputParser.ParseInput("./a_example.in");
+
+            Console.Read();
         }
     }
 }

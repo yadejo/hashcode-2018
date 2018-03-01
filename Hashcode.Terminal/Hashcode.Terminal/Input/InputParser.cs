@@ -20,18 +20,23 @@ namespace Hashcode.Terminal
             output.rows = int.Parse( values[0]);
             output.columns = int.Parse(values[1]); 
             output.vihicules = int.Parse(values[2]);
-            output.rides = int.Parse(values[3]);
+            output.ridesCount = int.Parse(values[3]);
             output.bonus = int.Parse(values[4]);
             output.steps = int.Parse(values[5]);
-            
-            foreach (string line in lines)
+
+            for (int index = 1; index < lines.Length; index++)
             {
-               
+                var line = lines[index].Split(' ');
+                output.AddRide(new Ride
+                {
+                    StartPoint = new Point(int.Parse(line[0]),int.Parse(line[1])),
+                    EndPoint = new Point(int.Parse(line[2]), int.Parse(line[3])),
+                    EndTime = int.Parse(line[4]),
+                    StartTime = int.Parse(line[5])
+                });
             }
 
-            // Keep the console window open in debug mode.
-            Console.WriteLine("Press any key to exit.");
-            System.Console.ReadKey();
+            return output;
         }
     }
 }
