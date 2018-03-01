@@ -11,16 +11,18 @@ namespace Hashcode.Terminal
 
         public static ValuesMap ParseInput(string path)
         {
+
+            var output = new ValuesMap();
             string[] lines = System.IO.File.ReadAllLines(path);
 
            // read first line
             var values = lines[0].Split(' ');
-            var rows = values[0];
-            var columns = values[1];
-            var vihicules = values[2];
-            var rides = values[3];
-            var bonus = values[4];
-            var steps = values[5];
+            output.rows = int.Parse( values[0]);
+            output.columns = int.Parse(values[1]); 
+            output.vihicules = int.Parse(values[2]);
+            output.rides = int.Parse(values[3]);
+            output.bonus = int.Parse(values[4]);
+            output.steps = int.Parse(values[5]);
             
             foreach (string line in lines)
             {
