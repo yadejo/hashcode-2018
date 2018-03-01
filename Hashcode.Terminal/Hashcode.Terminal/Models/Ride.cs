@@ -4,7 +4,12 @@ using System.Text;
 
 namespace Hashcode.Terminal.Models
 {
-    class Ride
+    public class Ride
     {
+        public Point StartPoint;
+        public Point EndPoint;
+
+        public int StartTime;
+        public int EndTime;
     }
 }
