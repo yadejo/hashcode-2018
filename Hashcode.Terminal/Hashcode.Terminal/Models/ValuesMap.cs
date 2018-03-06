@@ -19,18 +19,21 @@ namespace Hashcode.Terminal.Models
             set
             {
                 _rides = value;
-                Rides = new Ride[value];
             }
         }
 
         public int bonus { get; set; }
         public int steps { get; set; }
 
-        public Ride[] Rides { get; set; }
+        public List<Ride> Rides { get; set; }
+        public ValuesMap()
+        {
+            Rides = new List<Ride>();
+        }
 
         public void AddRide(Ride r)
         {
-            Rides.Append(r);
+            Rides.Add(r);
         }
 
 

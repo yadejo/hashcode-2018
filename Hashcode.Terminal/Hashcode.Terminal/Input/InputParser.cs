@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.IO;
 using System.Text;
 using Hashcode.Terminal.Models;
@@ -29,10 +30,11 @@ namespace Hashcode.Terminal
                 var line = lines[index].Split(' ');
                 output.AddRide(new Ride
                 {
-                    StartPoint = new Point(int.Parse(line[0]),int.Parse(line[1])),
-                    EndPoint = new Point(int.Parse(line[2]), int.Parse(line[3])),
-                    EndTime = int.Parse(line[4]),
-                    StartTime = int.Parse(line[5])
+                    Start = new Point(int.Parse(line[0]), int.Parse(line[1])),
+                    End = new Point(int.Parse(line[2]), int.Parse(line[3])),
+                    startTick = int.Parse(line[4]),
+                    EndTick = int.Parse(line[5]),
+                    Id = index - 1
                 });
             }
 
