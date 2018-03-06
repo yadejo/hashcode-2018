@@ -16,6 +16,9 @@ namespace Hashcode.Terminal.Models
         private List<int> takenRides = new List<int>();
         private List<Car> _availableCars = new List<Car>();
         public Dictionary<int, List<Ride>> handled { get; }
+        private double avarageDistance;
+        private double bonusOffset;
+        private double range;
         public Board(ValuesMap valueMap)
         {
             _valueMap = valueMap;
@@ -30,6 +33,10 @@ namespace Hashcode.Terminal.Models
             }
             rides = valueMap.Rides.OrderBy(r => r.startTick).ToArray();
             rideList = valueMap.Rides.OrderBy(r => r.startTick).ToList();
+            avarageDistance = rideList.Average(x => CalculateDistance(x.Start, x.End));
+            bonusOffset = (_valueMap.bonus + avarageDistance) / avarageDistance;
+            range = _valueMap.columns * _valueMap.rows * .05;
+            Console.WriteLine($"range is {range}");
         }
 
         public void Start()
@@ -61,14 +68,14 @@ namespace Hashcode.Terminal.Models
             var toRemove = new List<int>();
             for (int j = 0; j < _availableCars.Count; j++)
             {
-                for (int k = 0; k < rideList.Count; k++)
+                var orderedRides = rideList.OrderByDescending(x => GetRideValue(x, _availableCars[j].Position, iteration)).ToList();
+                for (int k = 0; k < orderedRides.Count; k++)
                 {
-                    var distance = CalculateDistance(_availableCars[j].Position, rideList[k].Start);
-                    if (distance + iteration <= rideList[k].startTick && !takenRides.Contains(rideList[k].Id))
+                    if (!takenRides.Contains(orderedRides[k].Id))
                     {
-                        _availableCars[j].AssignRide(rideList[k]);
-                        takenRides.Add(rideList[k].Id);
-                        toRemove.Add(k);
+                        _availableCars[j].AssignRide(orderedRides[k]);
+                        takenRides.Add(orderedRides[k].Id);
+                        toRemove.Add(orderedRides[k].Id);
                         break;
                     }
                 }
@@ -76,11 +83,39 @@ namespace Hashcode.Terminal.Models
             toRemove = toRemove.OrderByDescending(x => x).ToList();
             foreach (var item in toRemove)
             {
-                rideList.RemoveAt(item);
+                var index = rideList.FindIndex(x => x.Id == item);
+                rideList.RemoveAt(index);
             }
             //if(toRemove.Count > 0)
             //    Console.WriteLine($"Assigned {toRemove.Count} rides to cars on iteration {iteration}");
             _availableCars.Clear();
+        }
+
+        private double GetRideValue(Ride ride, Point carPos, int iteration)
+        {
+            var rideDistance = CalculateDistance(ride.End, ride.Start);
+            var score = CalculateDistance(ride.End, ride.Start);
+            var distanceFromCar = CalculateDistance(carPos, ride.Start);
+            var arrivalTime = iteration + distanceFromCar;
+            if (arrivalTime <= ride.startTick)
+            {
+                score -= (ride.startTick - arrivalTime);
+                score += _valueMap.bonus;
+                if(rideDistance > distanceFromCar)
+                score += (rideDistance  - distanceFromCar);
+            }
+            else
+            {
+                score -= distanceFromCar;
+                if (rideDistance > distanceFromCar)
+                    score += (rideDistance - distanceFromCar);
+            }
+            var earliestEndTime = iteration + distanceFromCar + rideDistance;
+            if (earliestEndTime > ride.EndTick)
+            {
+                return int.MinValue;
+            }
+            return score;
         }
 
         private Ride GetBestRide(Car car, int iteration, ref int rangecounter)

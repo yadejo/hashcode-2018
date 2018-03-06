@@ -14,12 +14,16 @@ namespace Hashcode.Terminal.Models
         private bool hasPassanger;
         public List<int> HandledIds { get; set; }
         public int Score { get; set; }
+        public int EfficientTicks { get; set; }
+        public int InefficientTicks { get; set; }
         public Car()
         {
             Position = new Point(0, 0);
             points = 0;
             Score = 0;
             HandledIds = new List<int>();
+            EfficientTicks = 0;
+            InefficientTicks = 0;
         }
 
         public void AssignRide(Ride ride)
@@ -35,16 +39,26 @@ namespace Hashcode.Terminal.Models
         {
             if(hasPassanger)
             {
-                if (ride.startTick >= iteration)
+                if (ride.startTick <= iteration)
                 {
+                    EfficientTicks++;
                     Score++;
                     DriveTo(ride.End, iteration);
+                }
+                else
+                {
+                    InefficientTicks++;
                 }
             }
             else
             {
+                InefficientTicks++;
                 if(ride != null)
-                DriveTo(ride.Start, iteration);
+                    DriveTo(ride.Start, iteration);
+            }
+            if(this.ride.Start == Position)
+            {
+                this.hasPassanger = true;
             }
         }
 
